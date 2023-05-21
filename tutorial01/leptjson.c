@@ -34,7 +34,7 @@ static int lept_parse_true(lept_context * c, lept_value * v) {
     return LEPT_PARSE_OK;
 }
 
-lept_parse_false(lept_context * c, lept_value * v) {
+static int lept_parse_false(lept_context * c, lept_value * v) {
     EXPECT(c, 'f');
     if (c->json[0] != 'a' || c->json[1] != 'l' || c->json[2] != 's' || c->json[3] != 'e')
         return LEPT_PARSE_INVALID_VALUE;
