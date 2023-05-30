@@ -32,7 +32,7 @@ static int test_pass = 0;
 static void test_parse_null() {
     lept_value v;
     lept_init(&v);
-    lept_set_boolean(&v, 0);
+    lept_set_boolean(&v, 0); /* 测试 null 时，应该把 v-> type 设置为 LEPT_TRUE 或 LETP_FALSE*/
     EXPECT_EQ_INT(LEPT_PARSE_OK, lept_parse(&v, "null"));
     EXPECT_EQ_INT(LEPT_NULL, lept_get_type(&v));
     lept_free(&v);
@@ -113,6 +113,10 @@ static void test_parse_string() {
     TEST_STRING("Hello", "\"Hello\"");
     TEST_STRING("Hello\nWorld", "\"Hello\\nWorld\"");
     TEST_STRING("\" \\ / \b \f \n \r \t", "\"\\\" \\\\ \\/ \\b \\f \\n \\r \\t\"");
+    /*
+    TEST_STRING("\" \\ / \b \f \n \r \t", "\"\\\" \\\\ / \\b \\f \\n \\r \\t\"");
+    TEST_STRING("\" \\ / \b \f \n \r \t", "\"\\\" \\\\ \\/ \\b \\f \\n \\r \\t\"");
+    */
 }
 
 #define TEST_ERROR(error, json)\
