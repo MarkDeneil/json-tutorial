@@ -154,7 +154,7 @@ static int lept_parse_string(lept_context* c, lept_value* v) {
                     case 'u':
                         if (!(p = lept_parse_hex4(p, &u)))
                             STRING_ERROR(LEPT_PARSE_INVALID_UNICODE_HEX);
-                        if (u >= 0xD800 && u <= 0xDBFF) { /* surrogate pair */
+                        if (u >= 0xD800 && u <= 0xDBFF) { /* json surrogate pair */
                             if (*p++ != '\\')
                                 STRING_ERROR(LEPT_PARSE_INVALID_UNICODE_SURROGATE);
                             if (*p++ != 'u')
@@ -163,7 +163,14 @@ static int lept_parse_string(lept_context* c, lept_value* v) {
                                 STRING_ERROR(LEPT_PARSE_INVALID_UNICODE_HEX);
                             if (u2 < 0xDC00 || u2 > 0xDFFF)
                                 STRING_ERROR(LEPT_PARSE_INVALID_UNICODE_SURROGATE);
-                            u = (((u - 0xD800) << 10) | (u2 - 0xDC00)) + 0x10000;
+                            u = (((u - 0xD800) << 10) | (u2 - 0xDC00)) + 0x10000; 
+                            /* 
+                            高代理项 H：U+D800 - U+DBFF
+                            低代理项 L：U+DC00 - U+DFFF
+                            codepoint = 0x10000 + (H − 0xD800) × 0x400 + (L − 0xDC00) 
+                            (u - 0xD800) << 10) 使 u 的二进制低 10 位为 0，而 L-0xDC00 最大为 03FF，只有低 10 位有值，剩下的高位都为 0, 此时两数相加和相或效果相同
+                            所以公式中的 (H − 0xD800) × 0x400 + (L − 0xDC00) 在代码中可以表示为 (((u - 0xD800) << 10) | (u2 - 0xDC00))
+                            */
                         }
                         lept_encode_utf8(c, u);
                         break;
