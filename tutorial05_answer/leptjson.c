@@ -196,7 +196,7 @@ static int lept_parse_array(lept_context* c, lept_value* v) {
         return LEPT_PARSE_OK;
     }
     for (;;) {
-        lept_value e;
+        lept_value e; /* 这里的临时对象 e 中使用 malloc 动态申请的内存也要进行释放。形参 v 中的动态内存在 test_parse_array 中已经释放了。形参 c 中的动态分配的内存在 lept_parse 中使用 free(c.stack); 释放或者在 lept_parse_array 最后的循环中释放（当解析出现错误时用这种方式释放）。*/
         lept_init(&e);
         if ((ret = lept_parse_value(c, &e)) != LEPT_PARSE_OK)
             break;
