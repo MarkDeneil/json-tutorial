@@ -275,7 +275,9 @@ static int lept_parse_object(lept_context* c, lept_value* v) {
             break;
         memcpy(lept_context_push(c, sizeof(lept_member)), &m, sizeof(lept_member));
         size++;
-        m.k = NULL; /* ownership is transferred to member on stack */
+        /* 必须加上下面的语句。之前使用 malloc 分配给 m.k 的动态内存已经由 memcpy(lept_context_push(c, sizeof(lept_member)), &m, sizeof(lept_member)); 语句
+        使得 c 的栈 stack 上的 lept_member 成员中的 m.k 所指向，所以此时 m.k 不能再指向该内存*/
+        m.k = NULL; /* ownership is transferred to member on stack */ 
         /* parse ws [comma | right-curly-brace] ws */
         lept_parse_whitespace(c);
         if (*c->json == ',') {
