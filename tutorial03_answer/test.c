@@ -111,6 +111,16 @@ static void test_parse_number() {
 static void test_parse_string() {
     TEST_STRING("", "\"\"");
     TEST_STRING("Hello", "\"Hello\"");
+    /*
+    以下面这个例子来说，json 中的字符串是： "Hello\nWorld"
+    上面这个字符串存入了c++的char数组中，变为："\"Hello\\nWorld\""
+    如果直接输出该数组，就变为："Hello\nWorld"
+    json 中的 \n 原本是一个换行符，但在 c++ 中输出时却变成了 '\' 和 'n' 两个字符
+
+    json 中的字符串是 "Hello\"World"
+    存入 c++ 的 char 数组中： "\"Hello\\"World"
+    如果直接输出该数组，变为："Hello\"World",不能输出
+    */
     TEST_STRING("Hello\nWorld", "\"Hello\\nWorld\"");
     TEST_STRING("\" \\ / \b \f \n \r \t", "\"\\\" \\\\ \\/ \\b \\f \\n \\r \\t\"");
     /*
